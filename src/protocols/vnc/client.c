@@ -39,11 +39,18 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include "log.h"
 
 int guac_client_init(guac_client* client) {
 
     /* Set client args */
     client->args = GUAC_VNC_CLIENT_ARGS;
+
+    guac_vnc_client_log_info("%d\n", sizeof(client->args));
+    char** p = client->args;
+    while(*p != nullptr) {
+        guac_vnc_client_log_info("\t%s\n", *p++);
+    }
 
     /* Alloc client data */
     guac_vnc_client* vnc_client = calloc(1, sizeof(guac_vnc_client));
