@@ -232,8 +232,33 @@ rfbClient* guac_vnc_get_client(guac_client* client) {
         rfb_client->appData.encodingsString = strdup(vnc_settings->encodings);
 
     /* Connect */
+#if 0
     if (rfbInitClient(rfb_client, NULL, NULL))
         return rfb_client;
+#else
+    // @MC
+    // connect with options(jpeg encoding).
+
+    char* argv[] = {
+        "programName",
+        "-encodings",
+        "tight",
+        "-quality",
+        "9",
+        NULL
+    };
+    int argc = 0;
+    while(argv[argc] != NULL)
+    {
+        argc++;
+    }
+
+    rfb_client->appData.encodingsString = "tight";
+    rfb_client->appData.enableJPEG = TRUE;
+
+    if (rfbInitClient(rfb_client, &argc, argv))
+        return rfb_client;
+#endif
 
     /* If connection fails, return NULL */
     return NULL;

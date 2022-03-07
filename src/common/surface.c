@@ -1704,6 +1704,8 @@ static void __guac_common_surface_flush_to_png(guac_common_surface* surface,
  */
 static int guac_common_surface_suggest_quality(guac_client* client) {
 
+    return 85;
+
     int lag = guac_client_get_processing_lag(client);
 
     /* Scale quality linearly from 90 to 30 as lag varies from 20ms to 80ms */
@@ -1944,7 +1946,9 @@ static void __guac_common_surface_flush(guac_common_surface* surface) {
             else if (surface->dirty) {
 
                 flushed++;
-
+// @MC
+// always encode surface as jpeg.
+#if 0
                 int opaque = __guac_common_surface_is_opaque(surface,
                             &surface->dirty_rect);
 
@@ -1961,7 +1965,19 @@ static void __guac_common_surface_flush(guac_common_surface* surface) {
                 /* Use PNG if no lossy formats are appropriate */
                 else
                     __guac_common_surface_flush_to_png(surface, opaque);
+#else
+                __guac_common_surface_flush_to_jpeg(surface);
 
+                // to avoid compile error.
+                if(0)
+                {
+                    int opaque = __guac_common_surface_is_opaque(surface, &surface->dirty_rect);
+                    __guac_common_surface_should_use_webp(surface, &surface->dirty_rect);
+                    __guac_common_surface_should_use_jpeg(surface, &surface->dirty_rect);
+                    __guac_common_surface_flush_to_webp(surface, opaque);
+                    __guac_common_surface_flush_to_png(surface, opaque);
+                }
+#endif
             }
 
         }
